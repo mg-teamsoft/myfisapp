@@ -42,7 +42,7 @@ const glimpses = [
 
 const getNextLaunchDate = () => {
   const now = new Date();
-  let target = new Date(now.getFullYear(), 11, 1, 0, 0, 0);
+  let target = new Date(now.getFullYear(), 12, 1, 0, 0, 0);
   if (target < now) {
     target = new Date(now.getFullYear() + 1, 11, 1, 0, 0, 0);
   }
@@ -216,18 +216,17 @@ function App() {
       <footer className="footer">
         <p>© {new Date().getFullYear()} My Fiş App, All rights reserved.</p>
         <div className="footer-links">
-          <a href="#terms">Terms of Service</a>
-          <a href="#privacy">Privacy Policy</a>
-          <a href="#support">Support</a>
+          <a href="mailto:info@teamsoft.com.tr">Contact Us for Support</a>
         </div>
-        <div className="footer-social">
+        
+        {/* <div className="footer-social">
           <a href="#tw" aria-label="Twitter">
             <span>Twitter</span>
           </a>
           <a href="#ln" aria-label="LinkedIn">
             <span>LinkedIn</span>
           </a>
-        </div>
+        </div> */}
       </footer>
     </div>
   );
