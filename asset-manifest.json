@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "/myfisapp/static/css/main.0f8d057d.css",
-    "main.js": "/myfisapp/static/js/main.a6775bd5.js",
+    "main.js": "/myfisapp/static/js/main.7859392c.js",
     "static/media/AppIcon.png": "/myfisapp/static/media/AppIcon.723eae698ab8dee07983.png",
     "static/media/screenshot2.jpg": "/myfisapp/static/media/screenshot2.ec17a56c5b092876cdcf.jpg",
     "static/media/screenshot1.jpg": "/myfisapp/static/media/screenshot1.2c9e86d6342ad1180465.jpg",
     "index.html": "/myfisapp/index.html",
     "main.0f8d057d.css.map": "/myfisapp/static/css/main.0f8d057d.css.map",
-    "main.a6775bd5.js.map": "/myfisapp/static/js/main.a6775bd5.js.map"
+    "main.7859392c.js.map": "/myfisapp/static/js/main.7859392c.js.map"
   },
   "entrypoints": [
     "static/css/main.0f8d057d.css",
-    "static/js/main.a6775bd5.js"
+    "static/js/main.7859392c.js"
   ]
 }
