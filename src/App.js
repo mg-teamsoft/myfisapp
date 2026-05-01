@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Route, Routes } from "react-router-dom";
 import { Button } from "./components/ui/button";
-import PrivacyPage from "./components/privacy";
 import AppIcon from "./assets/AppIcon.png";
 import heroShot from "./assets/screenshot1.jpg";
 import detailShot from "./assets/screenshot2.jpg";
@@ -219,7 +217,7 @@ function HomePage() {
         <p>© {new Date().getFullYear()} My Fiş App, All rights reserved.</p>
         <div className="footer-links">
           <a href="mailto:info@teamsoft.com.tr">Contact Us for Support</a>
-          <a href="#/privacy">Privacy Policy</a>
+          <a href={`${process.env.PUBLIC_URL}/privacy.html`}>Privacy Policy</a>
         </div>
         
         {/* <div className="footer-social">
@@ -236,12 +234,7 @@ function HomePage() {
 }
 
 function App() {
-  return (
-    <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/privacy" element={<PrivacyPage />} />
-    </Routes>
-  );
+  return <HomePage />;
 }
 
 export default App;
