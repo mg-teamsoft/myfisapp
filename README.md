@@ -1,39 +1,19 @@
-# myfisapp
+# myfisapp static pages
 
-## Deploy to GitHub Pages
+This repository deploys only the static pages required for My Fiş App links.
 
-To deploy this React app to GitHub Pages using the `gh-pages` package, follow these steps:
+## Pages
 
-1. Install `gh-pages` as a dev dependency:
+- `/contacts/invites/accept?token=...`
+- `/contacts/invites/reject?token=...`
+- `/resetPassword?token=...`
 
-```bash
-npm install --save-dev gh-pages
-```
+The invite pages call the contacts invite API. The reset password page shows a password form and calls `/api/auth/reset-password`.
 
-2. Add a `homepage` field to your `package.json` (replace `OWNER` and `REPO`):
-
-```json
-"homepage": "https://OWNER.github.io/REPO"
-```
-
-3. Add deployment scripts to `package.json` inside the `scripts` section:
-
-```json
-"scripts": {
-  "start": "react-scripts start",
-  "build": "react-scripts build",
-  "predeploy": "npm run build",
-  "deploy": "gh-pages -d build"
-}
-```
-
-4. Deploy to GitHub Pages:
+## Deploy
 
 ```bash
 npm run deploy
 ```
 
-Notes:
-- Make sure your repository is pushed to GitHub and the `homepage` value matches your GitHub Pages URL.
-- If your app is in a repository subpath or org site, adjust the `homepage` accordingly.
-# myfisapp
+The deploy command publishes the `public/` directory to GitHub Pages with dotfiles included, so `.well-known/apple-app-site-association` is deployed.

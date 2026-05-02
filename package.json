@@ -1,35 +1,14 @@
 {
-  "name": "react-modern-onepage",
+  "name": "myfisapp-static-pages",
   "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "framer-motion": "^12.23.24",
-    "gh-pages": "^6.3.0",
-    "lucide-react": "^0.554.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^7.9.6",
-    "react-scripts": "5.0.1"
+    "gh-pages": "^6.3.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build --cname myfisapp.com"
+    "start": "python3 -m http.server ${PORT:-5000} --directory public",
+    "build": "echo \"No build required for static public files\"",
+    "deploy": "gh-pages -d public --dotfiles --cname app.myfisapp.com"
   },
-  "homepage": "https://myfisapp.com",
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  }
+  "homepage": "https://app.myfisapp.com"
 }
