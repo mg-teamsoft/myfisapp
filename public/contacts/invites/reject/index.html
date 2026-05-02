@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reject Invitation | My Fiş App</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      box-sizing: border-box;
+      background: #f5f7f8;
+      color: #172126;
+      font-family: Arial, sans-serif;
+    }
+
+    main {
+      width: min(100%, 460px);
+      padding: 32px;
+      border: 1px solid #dce4e8;
+      border-radius: 10px;
+      background: #fff;
+      box-shadow: 0 12px 32px rgba(23, 33, 38, 0.08);
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: 28px;
+      line-height: 1.2;
+    }
+
+    p {
+      margin: 0;
+      color: #536168;
+      line-height: 1.6;
+    }
+
+    .status {
+      margin-top: 20px;
+      font-weight: 700;
+      color: #13795b;
+    }
+
+    .status.error {
+      color: #b42318;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Rejecting Invitation</h1>
+    <p id="message">Please wait while we update your invitation.</p>
+    <p id="status" class="status">Processing...</p>
+  </main>
+
+  <script>
+    (function () {
+      var isLocalhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+      var apiBaseUrl = isLocalhost ? "http://localhost:3000" : "https://api.myfisapp.com:3000";
+      var action = "reject";
+      var message = document.getElementById("message");
+      var status = document.getElementById("status");
+      var token = new URLSearchParams(window.location.search).get("token");
+
+      function setError(text, detail) {
+        message.textContent = detail;
+        status.textContent = text;
+        status.className = "status error";
+      }
+
+      if (!token) {
+        setError("Invalid invitation link", "This invitation link is missing a token.");
+        return;
+      }
+
+      fetch(apiBaseUrl + "/api/contacts/invites/" + action + "?token=" + encodeURIComponent(token), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+        .then(function (response) {
+          if (!response.ok) {
+            throw new Error("Request failed with status " + response.status);
+          }
+
+          message.textContent = "Your invitation has been rejected.";
+          status.textContent = "Done";
+        })
+        .catch(function () {
+          setError("Request failed", "We could not reject this invitation. Please try again later.");
+        });
+    })();
+  </script>
+</body>
+</html>
