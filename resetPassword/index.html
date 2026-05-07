@@ -184,7 +184,7 @@
         submitButton.disabled = true;
         setStatus("Resetting password...", false);
 
-        fetch(apiBaseUrl + "/api/auth/reset-password", {
+        fetch(apiBaseUrl + "/api/auth/reset-password?token=" + encodeURIComponent(token), {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
