@@ -27,6 +27,31 @@
       text-align: center;
     }
 
+    .language-switcher {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 16px;
+    }
+
+    .language-switcher label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #536168;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .language-switcher select {
+      min-height: 34px;
+      padding: 6px 28px 6px 10px;
+      border: 1px solid #cbd8de;
+      border-radius: 8px;
+      background: #fff;
+      color: #172126;
+      font: inherit;
+    }
+
     h1 {
       margin: 0 0 12px;
       font-size: 28px;
@@ -52,7 +77,17 @@
 </head>
 <body>
   <main>
-    <h1>Rejecting Invitation</h1>
+    <div class="language-switcher">
+      <label>
+        <span id="language-label">Language</span>
+        <select id="language-select" autocomplete="off">
+          <option value="en">English</option>
+          <option value="tr">Türkçe</option>
+        </select>
+      </label>
+    </div>
+
+    <h1 id="title">Rejecting Invitation</h1>
     <p id="message">Please wait while we update your invitation.</p>
     <p id="status" class="status">Processing...</p>
   </main>
@@ -62,9 +97,55 @@
       var isLocalhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
       var apiBaseUrl = isLocalhost ? "http://localhost:3000" : "https://api.myfisapp.com";
       var action = "reject";
+      var searchParams = new URLSearchParams(window.location.search);
+      var token = searchParams.get("token");
+      var currentLanguage = getInitialLanguage();
+      var currentState = "processing";
+      var title = document.getElementById("title");
       var message = document.getElementById("message");
       var status = document.getElementById("status");
-      var token = new URLSearchParams(window.location.search).get("token");
+      var languageLabel = document.getElementById("language-label");
+      var languageSelect = document.getElementById("language-select");
+
+      var translations = {
+        en: {
+          documentTitle: "Reject Invitation | My Fiş App",
+          languageLabel: "Language",
+          title: "Rejecting Invitation",
+          processingMessage: "Please wait while we update your invitation.",
+          processingStatus: "Processing...",
+          missingTokenStatus: "Invalid invitation link",
+          missingTokenMessage: "This invitation link is missing a token.",
+          successMessage: "Your invitation has been rejected.",
+          successStatus: "Done",
+          requestFailed: "Request failed",
+          genericError: "We could not reject this invitation. Please try again later.",
+          requestFailedWithStatus: "Request failed with status "
+        },
+        tr: {
+          documentTitle: "Davetiyeyi Reddet | My Fiş App",
+          languageLabel: "Dil",
+          title: "Davetiye Reddediliyor",
+          processingMessage: "Davetiyenizi güncellerken lütfen bekleyin.",
+          processingStatus: "İşleniyor...",
+          missingTokenStatus: "Geçersiz davetiye bağlantısı",
+          missingTokenMessage: "Bu davetiye bağlantısında token eksik.",
+          successMessage: "Davetiyeniz reddedildi.",
+          successStatus: "Tamamlandı",
+          requestFailed: "İstek başarısız oldu",
+          genericError: "Bu davetiyeyi reddedemedik. Lütfen daha sonra tekrar deneyin.",
+          requestFailedWithStatus: "İstek şu durum koduyla başarısız oldu: "
+        }
+      };
+
+      applyLanguage(currentLanguage);
+
+      languageSelect.addEventListener("change", function () {
+        currentLanguage = languageSelect.value;
+        searchParams.set("lang", currentLanguage);
+        window.history.replaceState(null, "", window.location.pathname + "?" + searchParams.toString());
+        applyLanguage(currentLanguage);
+      });
 
       function setError(text, detail) {
         message.textContent = detail;
@@ -72,8 +153,43 @@
         status.className = "status error";
       }
 
+      function getInitialLanguage() {
+        var requestedLanguage = (searchParams.get("lang") || "").toLowerCase();
+
+        if (requestedLanguage === "en" || requestedLanguage === "tr") {
+          return requestedLanguage;
+        }
+
+        return (navigator.language || "").toLowerCase().indexOf("tr") === 0 ? "tr" : "en";
+      }
+
+      function applyLanguage(language) {
+        var text = translations[language] || translations.en;
+
+        document.documentElement.lang = language;
+        document.title = text.documentTitle;
+        languageLabel.textContent = text.languageLabel;
+        languageSelect.value = language;
+        title.textContent = text.title;
+
+        if (currentState === "missing-token") {
+          setError(text.missingTokenStatus, text.missingTokenMessage);
+        } else if (currentState === "success") {
+          message.textContent = text.successMessage;
+          status.textContent = text.successStatus;
+          status.className = "status";
+        } else if (currentState === "error") {
+          setError(text.requestFailed, text.genericError);
+        } else {
+          message.textContent = text.processingMessage;
+          status.textContent = text.processingStatus;
+          status.className = "status";
+        }
+      }
+
       if (!token) {
-        setError("Invalid invitation link", "This invitation link is missing a token.");
+        currentState = "missing-token";
+        applyLanguage(currentLanguage);
         return;
       }
 
@@ -85,14 +201,15 @@
       })
         .then(function (response) {
           if (!response.ok) {
-            throw new Error("Request failed with status " + response.status);
+            throw new Error(translations[currentLanguage].requestFailedWithStatus + response.status);
           }
 
-          message.textContent = "Your invitation has been rejected.";
-          status.textContent = "Done";
+          currentState = "success";
+          applyLanguage(currentLanguage);
         })
         .catch(function () {
-          setError("Request failed", "We could not reject this invitation. Please try again later.");
+          currentState = "error";
+          applyLanguage(currentLanguage);
         });
     })();
   </script>

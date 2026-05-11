@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Reset Password | My Fiş App</title>
+  <title>Şifre Sıfırla | My Fiş App</title>
   <style>
     body {
       margin: 0;
@@ -102,6 +102,31 @@
       opacity: 0.7;
     }
 
+    .language-switcher {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 16px;
+    }
+
+    .language-switcher label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #536168;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .language-switcher select {
+      min-height: 34px;
+      padding: 6px 28px 6px 10px;
+      border: 1px solid #cbd8de;
+      border-radius: 8px;
+      background: #fff;
+      color: #172126;
+      font: inherit;
+    }
+
     .hint {
       margin-top: 6px;
       color: #536168;
@@ -154,37 +179,47 @@
 </head>
 <body>
   <main>
-    <a class="app-icon-link" href="https://myfisapp.com" aria-label="Open My Fis App website">
+    <div class="language-switcher">
+      <label>
+        <span id="language-label">Dil</span>
+        <select id="language-select" autocomplete="off">
+          <option value="tr">Türkçe</option>
+          <option value="en">English</option>
+        </select>
+      </label>
+    </div>
+
+    <a id="app-link" class="app-icon-link" href="https://myfisapp.com" aria-label="My Fis App web sitesini aç">
       <img class="app-icon" src="/AppIcon.png" alt="My Fis App" />
     </a>
-    <h1>Reset Password</h1>
-    <p id="message">Enter a new password for your My Fiş App account.</p>
+    <h1 id="title">Şifre Sıfırla</h1>
+    <p id="message">My Fiş App hesabınız için yeni bir şifre girin.</p>
 
     <form id="reset-form">
       <label>
-        New Password
+        <span id="password-label">Yeni Şifre</span>
         <input id="password" type="password" autocomplete="new-password" required />
       </label>
 
       <label>
-        Confirm Password
+        <span id="confirm-password-label">Şifreyi Onayla</span>
         <input id="confirm-password" type="password" autocomplete="new-password" required />
       </label>
 
-      <div class="hint">
-        Password must be at least 8 characters and include uppercase, lowercase, number, and special character.
+      <div id="password-hint" class="hint">
+        Şifre en az 8 karakter olmalı; büyük harf, küçük harf, rakam ve özel karakter içermelidir.
       </div>
 
-      <button id="submit-button" type="submit">Reset Password</button>
+      <button id="submit-button" type="submit">Şifreyi Sıfırla</button>
     </form>
 
     <div id="status" class="status" aria-live="polite"></div>
 
     <footer class="footer">
-      <p>&copy; <span id="footer-year"></span> My Fiş App, All rights reserved.</p>
+      <p>&copy; <span id="footer-year"></span> My Fiş App, <span id="footer-rights">Tüm hakları saklıdır.</span></p>
       <div class="footer-links">
-        <a href="mailto:info@guvenai.com">Contact Us for Support</a>
-        <a href="https://myfisapp.com/privacy.html">Privacy Policy</a>
+        <a id="support-link" href="mailto:info@guvenai.com">Destek İçin Bize Ulaşın</a>
+        <a id="privacy-link" href="https://myfisapp.com/privacy.html">Gizlilik Politikası</a>
       </div>
     </footer>
   </main>
@@ -193,20 +228,129 @@
     (function () {
       var isLocalhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
       var apiBaseUrl = isLocalhost ? "http://localhost:3000" : "https://api.myfisapp.com";
-      var token = new URLSearchParams(window.location.search).get("token");
+      var searchParams = new URLSearchParams(window.location.search);
+      var token = searchParams.get("token");
       var form = document.getElementById("reset-form");
       var passwordInput = document.getElementById("password");
       var confirmPasswordInput = document.getElementById("confirm-password");
       var submitButton = document.getElementById("submit-button");
+      var languageSelect = document.getElementById("language-select");
+      var appLink = document.getElementById("app-link");
+      var languageLabel = document.getElementById("language-label");
+      var title = document.getElementById("title");
       var message = document.getElementById("message");
       var status = document.getElementById("status");
       var footerYear = document.getElementById("footer-year");
+      var footerRights = document.getElementById("footer-rights");
+      var passwordLabel = document.getElementById("password-label");
+      var confirmPasswordLabel = document.getElementById("confirm-password-label");
+      var passwordHint = document.getElementById("password-hint");
+      var supportLink = document.getElementById("support-link");
+      var privacyLink = document.getElementById("privacy-link");
+      var currentLanguage = getInitialLanguage();
+      var hasToken = Boolean(token);
+
+      var translations = {
+        en: {
+          documentTitle: "Reset Password | My Fiş App",
+          languageLabel: "Language",
+          appLinkLabel: "Open My Fis App website",
+          title: "Reset Password",
+          message: "Enter a new password for your My Fiş App account.",
+          missingTokenMessage: "This reset password link is missing a token.",
+          missingTokenStatus: "Invalid reset link",
+          passwordLabel: "New Password",
+          confirmPasswordLabel: "Confirm Password",
+          passwordHint: "Password must be at least 8 characters and include uppercase, lowercase, number, and special character.",
+          submitButton: "Reset Password",
+          footerRights: "All rights reserved.",
+          supportLink: "Contact Us for Support",
+          privacyLink: "Privacy Policy",
+          invalidPassword: "Password does not meet the requirements.",
+          passwordMismatch: "Passwords do not match.",
+          loading: "Resetting password...",
+          requestFailed: "Request failed with status ",
+          successMessage: "Your password has been reset.",
+          successStatus: "Done",
+          genericError: "We could not reset your password. Please try again later."
+        },
+        tr: {
+          documentTitle: "Şifre Sıfırla | My Fiş App",
+          languageLabel: "Dil",
+          appLinkLabel: "My Fis App web sitesini aç",
+          title: "Şifre Sıfırla",
+          message: "My Fiş App hesabınız için yeni bir şifre girin.",
+          missingTokenMessage: "Bu şifre sıfırlama bağlantısında token eksik.",
+          missingTokenStatus: "Geçersiz sıfırlama bağlantısı",
+          passwordLabel: "Yeni Şifre",
+          confirmPasswordLabel: "Şifreyi Onayla",
+          passwordHint: "Şifre en az 8 karakter olmalı; büyük harf, küçük harf, rakam ve özel karakter içermelidir.",
+          submitButton: "Şifreyi Sıfırla",
+          footerRights: "Tüm hakları saklıdır.",
+          supportLink: "Destek İçin Bize Ulaşın",
+          privacyLink: "Gizlilik Politikası",
+          invalidPassword: "Şifre gereksinimleri karşılamıyor.",
+          passwordMismatch: "Şifreler eşleşmiyor.",
+          loading: "Şifre sıfırlanıyor...",
+          requestFailed: "İstek şu durum koduyla başarısız oldu: ",
+          successMessage: "Şifreniz sıfırlandı.",
+          successStatus: "Tamamlandı",
+          genericError: "Şifrenizi sıfırlayamadık. Lütfen daha sonra tekrar deneyin."
+        }
+      };
 
       footerYear.textContent = new Date().getFullYear();
+      applyLanguage(currentLanguage);
+
+      languageSelect.addEventListener("change", function () {
+        currentLanguage = languageSelect.value;
+        searchParams.set("lang", currentLanguage);
+        window.history.replaceState(null, "", window.location.pathname + "?" + searchParams.toString());
+        applyLanguage(currentLanguage);
+      });
 
       function setStatus(text, isError) {
         status.textContent = text;
         status.className = isError ? "status error" : "status";
+      }
+
+      function getInitialLanguage() {
+        var requestedLanguage = (searchParams.get("lang") || "").toLowerCase();
+
+        if (requestedLanguage === "en" || requestedLanguage === "tr") {
+          return requestedLanguage;
+        }
+
+        return (navigator.language || "").toLowerCase().indexOf("tr") === 0 ? "tr" : "en";
+      }
+
+      function applyLanguage(language) {
+        var text = translations[language] || translations.en;
+
+        document.documentElement.lang = language;
+        document.title = text.documentTitle;
+        languageSelect.value = language;
+        languageLabel.textContent = text.languageLabel;
+        appLink.setAttribute("aria-label", text.appLinkLabel);
+        title.textContent = text.title;
+        passwordLabel.textContent = text.passwordLabel;
+        confirmPasswordLabel.textContent = text.confirmPasswordLabel;
+        passwordHint.textContent = text.passwordHint;
+        submitButton.textContent = text.submitButton;
+        footerRights.textContent = text.footerRights;
+        supportLink.textContent = text.supportLink;
+        privacyLink.textContent = text.privacyLink;
+
+        if (!hasToken) {
+          message.textContent = text.missingTokenMessage;
+          setStatus(text.missingTokenStatus, true);
+        } else if (form.hidden) {
+          message.textContent = text.successMessage;
+          setStatus(text.successStatus, false);
+        } else {
+          message.textContent = text.message;
+          setStatus("", false);
+        }
       }
 
       function isValidPassword(password) {
@@ -218,9 +362,8 @@
       }
 
       if (!token) {
-        message.textContent = "This reset password link is missing a token.";
-        setStatus("Invalid reset link", true);
         form.hidden = true;
+        applyLanguage(currentLanguage);
         return;
       }
 
@@ -231,17 +374,17 @@
         var confirmPassword = confirmPasswordInput.value;
 
         if (!isValidPassword(password)) {
-          setStatus("Password does not meet the requirements.", true);
+          setStatus(translations[currentLanguage].invalidPassword, true);
           return;
         }
 
         if (password !== confirmPassword) {
-          setStatus("Passwords do not match.", true);
+          setStatus(translations[currentLanguage].passwordMismatch, true);
           return;
         }
 
         submitButton.disabled = true;
-        setStatus("Resetting password...", false);
+        setStatus(translations[currentLanguage].loading, false);
 
         fetch(apiBaseUrl + "/api/auth/reset-password?token=" + encodeURIComponent(token), {
           method: "POST",
@@ -255,16 +398,16 @@
         })
           .then(function (response) {
             if (!response.ok) {
-              throw new Error("Request failed with status " + response.status);
+              throw new Error(translations[currentLanguage].requestFailed + response.status);
             }
 
             form.hidden = true;
-            message.textContent = "Your password has been reset.";
-            setStatus("Done", false);
+            message.textContent = translations[currentLanguage].successMessage;
+            setStatus(translations[currentLanguage].successStatus, false);
           })
           .catch(function () {
             submitButton.disabled = false;
-            setStatus("We could not reset your password. Please try again later.", true);
+            setStatus(translations[currentLanguage].genericError, true);
           });
       });
     })();
