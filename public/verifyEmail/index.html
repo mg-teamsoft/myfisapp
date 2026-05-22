@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Accept Invitation | My Fiş App</title>
+  <title>Verify Email | My Fiş App</title>
   <style>
     body {
       margin: 0;
@@ -135,9 +135,9 @@
     <a id="app-link" class="app-icon-link" href="https://myfisapp.com" aria-label="Open My Fis App website">
       <img class="app-icon" src="/AppIcon.png" alt="My Fis App" />
     </a>
-    <h1 id="title">Accepting Invitation</h1>
-    <p id="message">Please wait while we confirm your invitation.</p>
-    <p id="status" class="status">Processing...</p>
+    <h1 id="title">Verifying Email</h1>
+    <p id="message">Please wait while we verify your email address.</p>
+    <p id="status" class="status" aria-live="polite">Processing...</p>
 
     <footer class="footer">
       <p>&copy; <span id="footer-year"></span> My Fiş App, <span id="footer-rights">All rights reserved.</span></p>
@@ -150,9 +150,7 @@
 
   <script>
     (function () {
-      var isLocalhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
-      var apiBaseUrl = isLocalhost ? "http://localhost:3000" : "https://api.myfisapp.com";
-      var action = "accept";
+      var apiBaseUrl = "https://api.myfisapp.com";
       var searchParams = new URLSearchParams(window.location.search);
       var token = searchParams.get("token");
       var currentLanguage = getInitialLanguage();
@@ -170,39 +168,39 @@
 
       var translations = {
         en: {
-          documentTitle: "Accept Invitation | My Fiş App",
+          documentTitle: "Verify Email | My Fiş App",
           languageLabel: "Language",
           appLinkLabel: "Open My Fis App website",
-          title: "Accepting Invitation",
-          processingMessage: "Please wait while we confirm your invitation.",
+          title: "Verifying Email",
+          processingMessage: "Please wait while we verify your email address.",
           processingStatus: "Processing...",
-          missingTokenStatus: "Invalid invitation link",
-          missingTokenMessage: "This invitation link is missing a token.",
-          successMessage: "Your invitation has been accepted.",
+          missingTokenStatus: "Invalid verification link",
+          missingTokenMessage: "This email verification link is missing a token.",
+          successMessage: "Your email address has been verified.",
           successStatus: "Done",
           footerRights: "All rights reserved.",
           supportLink: "Contact Us for Support",
           privacyLink: "Privacy Policy",
           requestFailed: "Request failed",
-          genericError: "We could not accept this invitation. Please try again later.",
+          genericError: "We could not verify your email address. Please try again later.",
           requestFailedWithStatus: "Request failed with status "
         },
         tr: {
-          documentTitle: "Davetiyeyi Kabul Et | My Fiş App",
+          documentTitle: "E-posta Doğrula | My Fiş App",
           languageLabel: "Dil",
           appLinkLabel: "My Fis App web sitesini aç",
-          title: "Davetiye Kabul Ediliyor",
-          processingMessage: "Davetiyenizi onaylarken lütfen bekleyin.",
+          title: "E-posta Doğrulanıyor",
+          processingMessage: "E-posta adresinizi doğrularken lütfen bekleyin.",
           processingStatus: "İşleniyor...",
-          missingTokenStatus: "Geçersiz davetiye bağlantısı",
-          missingTokenMessage: "Bu davetiye bağlantısında token eksik.",
-          successMessage: "Davetiyeniz kabul edildi.",
+          missingTokenStatus: "Geçersiz doğrulama bağlantısı",
+          missingTokenMessage: "Bu e-posta doğrulama bağlantısında token eksik.",
+          successMessage: "E-posta adresiniz doğrulandı.",
           successStatus: "Tamamlandı",
           footerRights: "Tüm hakları saklıdır.",
           supportLink: "Destek İçin Bize Ulaşın",
           privacyLink: "Gizlilik Politikası",
           requestFailed: "İstek başarısız oldu",
-          genericError: "Bu davetiyeyi kabul edemedik. Lütfen daha sonra tekrar deneyin.",
+          genericError: "E-posta adresinizi doğrulayamadık. Lütfen daha sonra tekrar deneyin.",
           requestFailedWithStatus: "İstek şu durum koduyla başarısız oldu: "
         }
       };
@@ -267,7 +265,7 @@
         return;
       }
 
-      fetch(apiBaseUrl + "/api/contacts/invites/" + action + "?token=" + encodeURIComponent(token), {
+      fetch(apiBaseUrl + "/api/auth/verify-email?token=" + encodeURIComponent(token), {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
