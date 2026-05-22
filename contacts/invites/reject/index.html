@@ -27,6 +27,21 @@
       text-align: center;
     }
 
+    .app-icon-link {
+      display: block;
+      width: 88px;
+      height: 88px;
+      margin: 0 auto 20px;
+      border-radius: 20px;
+    }
+
+    .app-icon {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border-radius: 20px;
+    }
+
     .language-switcher {
       display: flex;
       justify-content: flex-end;
@@ -73,6 +88,36 @@
     .status.error {
       color: #b42318;
     }
+
+    .footer {
+      margin-top: 24px;
+      color: #536168;
+      font-size: 13px;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    .footer p {
+      margin: 0 0 10px;
+      font-size: inherit;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px 18px;
+    }
+
+    .footer-links a {
+      color: #13795b;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .footer-links a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -87,9 +132,20 @@
       </label>
     </div>
 
+    <a id="app-link" class="app-icon-link" href="https://myfisapp.com" aria-label="Open My Fis App website">
+      <img class="app-icon" src="/AppIcon.png" alt="My Fis App" />
+    </a>
     <h1 id="title">Rejecting Invitation</h1>
     <p id="message">Please wait while we update your invitation.</p>
     <p id="status" class="status">Processing...</p>
+
+    <footer class="footer">
+      <p>&copy; <span id="footer-year"></span> My Fiş App, <span id="footer-rights">All rights reserved.</span></p>
+      <div class="footer-links">
+        <a id="support-link" href="mailto:info@guvenai.com">Contact Us for Support</a>
+        <a id="privacy-link" href="https://myfisapp.com/privacy.html">Privacy Policy</a>
+      </div>
+    </footer>
   </main>
 
   <script>
@@ -106,11 +162,17 @@
       var status = document.getElementById("status");
       var languageLabel = document.getElementById("language-label");
       var languageSelect = document.getElementById("language-select");
+      var appLink = document.getElementById("app-link");
+      var footerYear = document.getElementById("footer-year");
+      var footerRights = document.getElementById("footer-rights");
+      var supportLink = document.getElementById("support-link");
+      var privacyLink = document.getElementById("privacy-link");
 
       var translations = {
         en: {
           documentTitle: "Reject Invitation | My Fiş App",
           languageLabel: "Language",
+          appLinkLabel: "Open My Fis App website",
           title: "Rejecting Invitation",
           processingMessage: "Please wait while we update your invitation.",
           processingStatus: "Processing...",
@@ -118,6 +180,9 @@
           missingTokenMessage: "This invitation link is missing a token.",
           successMessage: "Your invitation has been rejected.",
           successStatus: "Done",
+          footerRights: "All rights reserved.",
+          supportLink: "Contact Us for Support",
+          privacyLink: "Privacy Policy",
           requestFailed: "Request failed",
           genericError: "We could not reject this invitation. Please try again later.",
           requestFailedWithStatus: "Request failed with status "
@@ -125,6 +190,7 @@
         tr: {
           documentTitle: "Davetiyeyi Reddet | My Fiş App",
           languageLabel: "Dil",
+          appLinkLabel: "My Fis App web sitesini aç",
           title: "Davetiye Reddediliyor",
           processingMessage: "Davetiyenizi güncellerken lütfen bekleyin.",
           processingStatus: "İşleniyor...",
@@ -132,12 +198,16 @@
           missingTokenMessage: "Bu davetiye bağlantısında token eksik.",
           successMessage: "Davetiyeniz reddedildi.",
           successStatus: "Tamamlandı",
+          footerRights: "Tüm hakları saklıdır.",
+          supportLink: "Destek İçin Bize Ulaşın",
+          privacyLink: "Gizlilik Politikası",
           requestFailed: "İstek başarısız oldu",
           genericError: "Bu davetiyeyi reddedemedik. Lütfen daha sonra tekrar deneyin.",
           requestFailedWithStatus: "İstek şu durum koduyla başarısız oldu: "
         }
       };
 
+      footerYear.textContent = new Date().getFullYear();
       applyLanguage(currentLanguage);
 
       languageSelect.addEventListener("change", function () {
@@ -170,7 +240,11 @@
         document.title = text.documentTitle;
         languageLabel.textContent = text.languageLabel;
         languageSelect.value = language;
+        appLink.setAttribute("aria-label", text.appLinkLabel);
         title.textContent = text.title;
+        footerRights.textContent = text.footerRights;
+        supportLink.textContent = text.supportLink;
+        privacyLink.textContent = text.privacyLink;
 
         if (currentState === "missing-token") {
           setError(text.missingTokenStatus, text.missingTokenMessage);
