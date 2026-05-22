@@ -150,7 +150,8 @@
 
   <script>
     (function () {
-      var apiBaseUrl = "https://api.myfisapp.com";
+      var isLocalhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+      var apiBaseUrl = isLocalhost ? "http://localhost:3000" : "https://api.myfisapp.com";
       var searchParams = new URLSearchParams(window.location.search);
       var token = searchParams.get("token");
       var currentLanguage = getInitialLanguage();
